@@ -1,19 +1,13 @@
 import { Controller, Body, Param, Delete, Put, Get } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { GetCurrentUser, GetCurrentUserId, Public } from 'src/common/decorators';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { User } from './entities/user.entity';
-import { get } from 'mongoose';
-
-
+import { GetCurrentUserId } from 'src/common/decorators';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @ApiBearerAuth()
-  @Put('')
+  @Put()
   editProfile(
     @GetCurrentUserId() sub: string,
     @Body() userData: UpdateUserDto,
@@ -21,20 +15,28 @@ export class UserController {
     return this.userService.editProfile(sub, userData);
   }
 
-  @ApiBearerAuth()
-  @Delete('')
+  @Delete()
   deleteProfile(@GetCurrentUserId() sub: string) {
     return this.userService.deleteProfile(sub);
   }
 
-  @ApiBearerAuth()
-  @Get('')
-  currentUser(@GetCurrentUser() user: User) {
-    return user;
+
+  @Get()
+  getCurrentUser(@GetCurrentUserId() sub: string) {
+    return this.userService.currentUser(sub)
   }
 
 
+  @Get('/matches')
+  getOwnMatchs(@GetCurrentUserId() sub: string) {
+    return this.userService.getOwnMatchs(sub)
+  }
 
+
+  @Get("/match/joined")
+  jointedMatches(@GetCurrentUserId() sub: string) {
+    return this.userService.getJointedMatches(sub)
+  }
 
 
 }

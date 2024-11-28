@@ -13,6 +13,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
+    const request = ctx.getRequest<Request>();
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -25,7 +26,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     const errors =
       exception instanceof HttpException &&
-        exception.getResponse() instanceof Object
+      exception.getResponse() instanceof Object
         ? (exception.getResponse() as any).errors || { error: [message] }
         : { error: [message] };
 
